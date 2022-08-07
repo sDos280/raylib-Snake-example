@@ -25,6 +25,9 @@ body = [
     (COLUMNS // 2 - 2, ROWS // 2),
 ]
 
+SNAKE_BODY_COLOR = (64, 109, 240, 255)
+SNAKE_HEAD_COLOR = (43, 73, 171, 255)
+
 
 def reset_snake_body():
     global body
@@ -32,8 +35,12 @@ def reset_snake_body():
 
 
 def draw_snake():
-    for i in range(len(body)):
-        draw_rectangle(body[i][0] * TILE_X, body[i][1] * TILE_Y, TILE_X, TILE_Y, GRAY)
+    # draw snake body
+    for i in range(len(body) - 1):
+        draw_rectangle(body[i][0] * TILE_X, body[i][1] * TILE_Y, TILE_X, TILE_Y, SNAKE_BODY_COLOR)
+
+    # draw snake head
+    draw_rectangle(body[len(body) - 1][0] * TILE_X, body[len(body) - 1][1] * TILE_Y, TILE_X, TILE_Y, SNAKE_HEAD_COLOR)
 
 
 def move_snake():
@@ -67,7 +74,6 @@ def key_detection():
             movement["RIGHT"] = False
     if is_key_pressed(KEY_DOWN) or is_key_pressed(KEY_S):
         if not movement["UP"]:
-            print("ff")
             movement["UP"] = False
             movement["DOWN"] = True
             movement["LEFT"] = False
@@ -96,7 +102,7 @@ def generate_grid():
 def draw_grid():
     for i in range(ROWS):
         for j in range(COLUMNS):
-            draw_rectangle_lines(j * TILE_X, i * TILE_Y, TILE_X, TILE_Y, WHITE)
+            draw_rectangle_lines(j * TILE_X, i * TILE_Y, TILE_X, TILE_Y, LIGHTGRAY)
 
 
 generate_grid()
@@ -109,7 +115,7 @@ set_target_fps(10)
 while not window_should_close():
     begin_drawing()
 
-    clear_background(BLACK)
+    clear_background(WHITE)
 
     draw_grid()
     key_detection()
