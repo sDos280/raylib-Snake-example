@@ -18,27 +18,67 @@ grid = []
 
 movement = {"UP": False, "DOWN": False, "LEFT": False, "RIGHT": False}
 
+# head -> last, tail -> first
+body = [
+    (COLUMNS // 2, ROWS // 2),
+    (COLUMNS // 2 - 1, ROWS // 2),
+    (COLUMNS // 2 - 2, ROWS // 2),
+]
+
+
+def reset_snake_body():
+    global body
+    body = [(COLUMNS // 2, ROWS // 2)]
+
+
+def draw_snake():
+    for i in range(len(body)):
+        draw_rectangle(body[i][0] * TILE_X, body[i][1] * TILE_Y, TILE_X, TILE_Y, GRAY)
+
+
+def move_snake():
+    body_len = len(body)
+    if movement["DOWN"]:
+        body.append((body[body_len - 1][0], body[body_len - 1][1] + 1))
+        body.pop(0)
+
+    elif movement["UP"]:
+        body.append((body[body_len - 1][0], body[body_len - 1][1] - 1))
+        body.pop(0)
+
+    elif movement["RIGHT"]:
+        body.append((body[body_len - 1][0] + 1, body[body_len - 1][1]))
+        body.pop(0)
+
+    elif movement["LEFT"]:
+        body.append((body[body_len - 1][0] - 1, body[body_len - 1][1]))
+        body.pop(0)
+
+    if not ((0 <= body[body_len - 1][0] <= COLUMNS - 1) and (0 <= body[body_len - 1][1] <= ROWS - 1)):
+        reset_snake_body()
+
 
 def key_detection():
-    if is_key_down(KEY_UP) or is_key_down(KEY_W):
+    if is_key_pressed(KEY_UP) or is_key_pressed(KEY_W):
         if not movement["DOWN"]:
             movement["UP"] = True
             movement["DOWN"] = False
             movement["LEFT"] = False
             movement["RIGHT"] = False
-    elif is_key_down(KEY_DOWN) or is_key_down(KEY_S):
+    if is_key_pressed(KEY_DOWN) or is_key_pressed(KEY_S):
         if not movement["UP"]:
+            print("ff")
             movement["UP"] = False
             movement["DOWN"] = True
             movement["LEFT"] = False
             movement["RIGHT"] = False
-    elif is_key_down(KEY_LEFT) or is_key_down(KEY_A):
+    if is_key_pressed(KEY_LEFT) or is_key_pressed(KEY_A):
         if not movement["RIGHT"]:
             movement["UP"] = False
             movement["DOWN"] = False
             movement["LEFT"] = True
             movement["RIGHT"] = False
-    elif is_key_down(KEY_RIGHT) or is_key_down(KEY_D):
+    if is_key_pressed(KEY_RIGHT) or is_key_pressed(KEY_D):
         if not movement["LEFT"]:
             movement["UP"] = False
             movement["DOWN"] = False
@@ -64,7 +104,7 @@ generate_grid()
 init_window(SCREEN_WIDTH, SCREEN_HEIGHT,
             'raylib [other] example - Snake')
 
-set_target_fps(60)
+set_target_fps(10)
 
 while not window_should_close():
     begin_drawing()
@@ -73,7 +113,9 @@ while not window_should_close():
 
     draw_grid()
     key_detection()
+    move_snake()
+    draw_snake()
 
     end_drawing()
-    print(movement)
+
 close_window()
